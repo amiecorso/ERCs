@@ -56,7 +56,7 @@ Where the AssociatedAccountRecord contains:
 - `initiator` is the binary representation of an ERC-7930 address for the initiating account. 
 - `approver` is the binary representation of an ERC-7930 address for the approving account.
 - `validAt` is the timestamp from which the Association is valid.
-- (optional) `validUntil` is the optional timestamp at which the Association expires.
+- (optional) `validUntil` is the optional timestamp at which the Association expires. MUST be greater than `validAt`.
 - (optional) `interfaceId` is the 4-byte interface or method selector for the `data` field.
 - (optional) `data` is the arbitrary context data payload.
 
@@ -181,7 +181,9 @@ Onchain validation is possible as long as there are sufficient validation mechan
 
 ### Revocation
 Onchain Association stores MUST implement a revocation method. This method MUST allow either party of an Association to revoke a valid, active Association by submitting a revocation request. 
-@review in the case of an SAR that was only ever signed by one party, can the other party revoke?
+@review in the case of an SAR that was only ever signed by one party, can the other party revoke? 
+What happens if two different revocation requests are submitted for the same SAR with different timestamps? (from the same or different accounts)
+
 
 In such contexts, storage contracts MUST update the `revokedAt` field of the SAR to `block.timestamp` OR the account-specified revocation timestamp, whichever is greater. Then the implementation contract MUST emit the following event upon accepting a valid revocation request: 
 ```solidity
