@@ -60,6 +60,7 @@ Where the AssociatedAccountRecord contains:
 - (optional) `interfaceId` is the 4-byte interface or method selector for the `data` field.
 - (optional) `data` is the arbitrary context data payload.
 
+@review I wonder if we should be more opinionated or clear here that yes, an SAR might be in any of the below states (unsigned, one sig, two sigs) but that anything less than two sigs is not a mutually confirmed relationship? I know there might be some use cases where one sig is a sufficient signal, but something feels confusing about this to me.
 ### Signed Association Record
 When public declaration of validity is desired, one or both of the accounts MAY sign over the Associated Account Record. The EIP-712 hash (see Support for EIP-712 below) of the `AssociatedAccountRecord` can be signed by the initiating and approving accounts. The resulting signatures are included in a `SignedAssociationRecord`: 
 
@@ -180,6 +181,7 @@ Onchain validation is possible as long as there are sufficient validation mechan
 
 ### Revocation
 Onchain Association stores MUST implement a revocation method. This method MUST allow either party of an Association to revoke a valid, active Association by submitting a revocation request. 
+@review in the case of an SAR that was only ever signed by one party, can the other party revoke?
 
 In such contexts, storage contracts MUST update the `revokedAt` field of the SAR to `block.timestamp` OR the account-specified revocation timestamp, whichever is greater. Then the implementation contract MUST emit the following event upon accepting a valid revocation request: 
 ```solidity
